@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>券売機実験</title>
+
+  <link rel="stylesheet" href="css/style.css">
+  <script src="js/config.js" defer></script>
+  <script src="js/experiment.js" defer></script>
+</head>
+
+<body>
+  <noscript>この実験にはJavaScriptが必要です。</noscript>
+
+  <!-- 開始画面 -->
+  <section id="startScreen" class="screen" aria-labelledby="startTitle">
+    <main class="start-panel">
+      <h1 id="startTitle">券売機実験</h1>
+
+      <form id="startForm">
+        <label for="studentId">学籍番号</label>
+        <input
+          id="studentId"
+          name="studentId"
+          type="text"
+          placeholder="学籍番号を入力"
+          maxlength="40"
+          autocomplete="off"
+          spellcheck="false"
+          pattern="[A-Za-z0-9_-]{1,40}"
+          required
+        >
+
+        <button id="startButton" type="submit">実験開始</button>
+        <p id="startError" role="alert"></p>
+      </form>
+    </main>
+
+    <!-- 画面下部の実験者用設定 -->
+    <details id="experimentSettings" class="experiment-settings">
+      <summary>実験者用の設定・計測について</summary>
+
+      <div class="settings-panel">
+        <h2>実験順序</h2>
+
+        <label for="experimentSet">実験セット</label>
+        <select id="experimentSet">
+          <option value="1">セット1：D → C → B → A</option>
+          <option value="2">セット2：C → A → B → D</option>
+          <option value="3">セット3：C → A → D → B</option>
+          <option value="4">セット4：B → D → A → C</option>
+          <option value="5">セット5：D → A → C → B</option>
+          <option value="6">セット6：A → B → C → D</option>
+          <option value="7">セット7：D → B → A → C</option>
+          <option value="8">セット8：A → D → C → B</option>
+          <option value="9">セット9：B → C → D → A</option>
+          <option value="10">セット10：B → C → A → D</option>
+        </select>
+
+        <p id="orderPreview" aria-live="polite">D → C → B → A</p>
+
+        <div class="preview-controls">
+          <button type="button" data-preview="machineScreen">
+            券売機のデザインを見る
+          </button>
+          <button type="button" data-preview="ratingScreen">
+            評価表のデザインを見る
+          </button>
+        </div>
+
+        <p>
+          Figmaの仮ラベルを再現した見た目確認用です。
+          A〜Dの正式メニューは未登録です。
+        </p>
+
+        <h2>実施手順</h2>
+        <p>
+          各Task前の灰色8秒、メニュー15秒、提示後の灰色15秒、
+          食券選択後の灰色15秒、評価画面、Task間の灰色10秒。
+        </p>
+        <p>
+          案内は実験者が読み上げます。
+          音声の自動再生はありません。
+        </p>
+        <p>今回の版では、評価は回答まで待ちます。</p>
+
+        <label>
+          <input id="useFullscreen" type="checkbox">
+          開始時に全画面表示を要求する
+        </label>
+
+        <p>
+          実験中はEscで中断します。
+          画面を離れた場合も中断して記録を残します。
+        </p>
+      </div>
+    </details>
+  </section>
+
+  <!-- 灰色の待機画面 -->
+  <section
+    id="grayScreen"
+    class="screen"
+    aria-label="待機画面"
+    hidden
+  ></section>
+
+  <!-- 対象メニュー画面 -->
+  <section
+    id="menuScreen"
+    class="screen"
+    aria-label="対象メニュー"
+    hidden
+  >
+    <div class="stimulus-frame menu-frame">
+      <div class="menu-placeholder" aria-hidden="true"></div>
+      <img id="menuImage" alt="" draggable="false" hidden>
+      <p id="menuName"></p>
+    </div>
+  </section>
+
+  <!-- 券売機画面：Figmaの基準サイズ1200×1260 -->
+  <section
+    id="machineScreen"
+    class="screen"
+    aria-label="券売機"
+    hidden
+  >
+    <div
+      id="machineFrame"
+      class="stimulus-frame machine-frame"
+      data-design-width="1200"
+      data-design-height="1260"
+    >
+      <div class="machine-panel" aria-hidden="true"></div>
+
+      <!-- JavaScriptで63個の食券ボタンを生成 -->
+      <div id="ticketButtons" class="ticket-buttons"></div>
+
+      <!-- 決済端末は装飾。回答には使用しない -->
+      <div class="payment-unit" aria-hidden="true">
+        <div class="payment-terminal">
+          <div class="payment-display"></div>
+          <span class="blue-circle blue-circle-left"></span>
+          <span class="blue-circle blue-circle-right"></span>
+        </div>
+      </div>
+
+      <div class="ticket-outlet" aria-hidden="true"></div>
+    </div>
+  </section>
+
+  <!-- 7段階評価画面 -->
+  <section
+    id="ratingScreen"
+    class="screen"
+    aria-label="券売機の評価"
+    hidden
+  >
+    <form id="ratingForm" class="stimulus-frame rating-frame">
+      <fieldset>
+        <legend class="visually-hidden">
+          この券売機は使いやすい
+        </legend>
+
+        <div class="rating-table">
+          <label class="rating-row">
+            <input type="radio" name="rating" value="1" required>
+            <span class="rating-number">1</span>
+            <span>まったくそう思わない</span>
+          </label>
+
+          <label class="rating-row">
+            <input type="radio" name="rating" value="2">
+            <span class="rating-number">2</span>
+            <span>そう思わない</span>
+          </label>
+
+          <label class="rating-row">
+            <input type="radio" name="rating" value="3">
+            <span class="rating-number">3</span>
+            <span>ややそう思わない</span>
+          </label>
+
+          <label class="rating-row">
+            <input type="radio" name="rating" value="4">
+            <span class="rating-number">4</span>
+            <span>どちらともいえない</span>
+          </label>
+
+          <label class="rating-row">
+            <input type="radio" name="rating" value="5">
+            <span class="rating-number">5</span>
+            <span>ややそう思う</span>
+          </label>
+
+          <label class="rating-row">
+            <input type="radio" name="rating" value="6">
+            <span class="rating-number">6</span>
+            <span>そう思う</span>
+          </label>
+
+          <label class="rating-row">
+            <input type="radio" name="rating" value="7">
+            <span class="rating-number">7</span>
+            <span>非常にそう思う</span>
+          </label>
+        </div>
+      </fieldset>
+    </form>
+  </section>
+
+  <!-- 終了・結果画面 -->
+  <section
+    id="finishScreen"
+    class="screen"
+    aria-labelledby="finishTitle"
+    hidden
+  >
+    <main class="finish-panel">
+      <h1 id="finishTitle">実験が終了しました</h1>
+      <p id="finishMessage">ご協力ありがとうございました。</p>
+      <p id="resultSummary"></p>
+
+      <table id="resultTable">
+        <caption>実験結果</caption>
+        <thead>
+          <tr>
+            <th scope="col">提示順</th>
+            <th scope="col">Task</th>
+            <th scope="col">反応時間（ms）</th>
+            <th scope="col">評価</th>
+          </tr>
+        </thead>
+        <tbody id="resultRows"></tbody>
+      </table>
+
+      <button id="downloadCsv" type="button">
+        結果をCSVで保存
+      </button>
+      <button id="downloadJson" type="button">
+        記録をJSONで保存
+      </button>
+      <button id="returnToStart" type="button">
+        開始画面に戻る
+      </button>
+    </main>
+  </section>
+
+  <button id="previewExit" type="button" hidden>
+    プレビューを閉じる
+  </button>
+</body>
+</html>

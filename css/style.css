@@ -1,0 +1,470 @@
+:root {
+  font-family: "Noto Sans JP", "Yu Gothic", Meiryo, sans-serif;
+  color: #1b292b;
+  background: #363636;
+  --scale: 1;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+}
+
+button,
+input,
+select {
+  font: inherit;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+summary:focus-visible {
+  outline: 3px solid #1778f5;
+  outline-offset: 3px;
+}
+
+/* 共通画面 */
+
+.screen {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: #363636;
+  overflow: auto;
+}
+
+/* 開始画面 */
+
+#startScreen {
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  padding: 24px 32px;
+}
+
+.start-panel {
+  width: min(640px, 100%);
+  margin: auto;
+}
+
+.start-panel h1 {
+  text-align: center;
+  font-size: 32px;
+  margin: 0 0 32px;
+}
+
+#startForm {
+  display: grid;
+  gap: 12px;
+}
+
+#studentId {
+  width: 100%;
+  padding: 16px;
+  border: 1px solid #9da8a8;
+  border-radius: 5px;
+  font-size: 24px;
+  color: #1b292b;
+}
+
+#startButton {
+  padding: 16px;
+  border: 0;
+  border-radius: 4px;
+  background: #9bb0b7;
+  color: #fff;
+  font-weight: 700;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+#startButton:disabled {
+  cursor: default;
+  opacity: 0.6;
+}
+
+#startError {
+  color: #a02727;
+}
+
+/* 実験者用設定 */
+
+.experiment-settings {
+  width: 100%;
+  border-top: 1px solid #d7d5cd;
+  padding: 20px 0 0;
+}
+
+.experiment-settings summary {
+  cursor: pointer;
+}
+
+.settings-panel {
+  max-width: 1000px;
+}
+
+.settings-panel select {
+  padding: 12px;
+  width: 100%;
+}
+
+.preview-controls button {
+  padding: 10px 16px;
+  margin: 8px 8px 0 0;
+  border: 1px solid #9da8a8;
+  background: #fff;
+  cursor: pointer;
+}
+
+/* Figmaの1200×1260の画面を中央に配置。
+   --scaleはJavaScriptで画面サイズに合わせて設定します。 */
+
+.stimulus-frame {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 1200px;
+  height: 1260px;
+  transform: translate(-50%, -50%) scale(var(--scale));
+  transform-origin: center;
+  overflow: hidden;
+}
+
+/* 灰色画面 */
+
+#grayScreen::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 1200px;
+  height: 1260px;
+  background: #808080;
+  transform: translate(-50%, -50%) scale(var(--scale));
+  transform-origin: center;
+}
+
+#grayScreen.plain-base::before {
+  display: none;
+}
+
+/* 対象メニュー */
+
+.menu-frame {
+  background: #fff;
+}
+
+.menu-placeholder {
+  position: absolute;
+  left: 304.5px;
+  top: 221.5px;
+  width: 591px;
+  height: 562px;
+  background: #d9d9d9;
+}
+
+#menuImage {
+  max-width: 100%;
+  max-height: 800px;
+  object-fit: contain;
+}
+
+#menuName {
+  position: absolute;
+  left: 337px;
+  top: 852.5px;
+  width: 526px;
+  height: 186px;
+  margin: 0;
+  text-align: center;
+  font-family: Inter, "Noto Sans JP", sans-serif;
+  font-size: 96px;
+  line-height: normal;
+  font-weight: 400;
+  color: #000;
+}
+
+/* 券売機 */
+
+.machine-frame {
+  background: #eeece4;
+}
+
+.machine-panel {
+  position: absolute;
+  left: 59px;
+  top: 0;
+  width: 1128px;
+  height: 1260px;
+  background: #d7d5cd;
+}
+
+/* 食券ボタン領域 */
+
+.ticket-buttons {
+  position: absolute;
+  left: 90px;
+  top: 78px;
+  width: 1080px;
+  height: 950px;
+  overflow: hidden;
+}
+
+.ticket {
+  position: absolute;
+  width: 128px;
+  height: 94px;
+  padding: 0;
+  border: 2px solid #9da8a8;
+  border-radius: 0;
+  background: #f5f8f7;
+  color: #1b292b;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.ticket-label {
+  position: absolute;
+  left: 18px;
+  top: 23px;
+  width: 88px;
+  height: 7px;
+  border-radius: 3px;
+  background: #a1b8b9;
+}
+
+.ticket-price {
+  position: absolute;
+  left: 40px;
+  top: 41px;
+  width: 44px;
+  height: 6px;
+  border-radius: 3px;
+  background: #bbcdcd;
+}
+
+.ticket-selection {
+  position: absolute;
+  left: 3px;
+  top: 70px;
+  width: 118px;
+  height: 15px;
+  background: #4c5654;
+}
+
+/* 左上のボタンはFigmaから取得したSVGを表示 */
+
+.ticket.first {
+  border: 0;
+  background: transparent;
+}
+
+.ticket.first img {
+  display: block;
+  width: 128px;
+  height: 94px;
+  pointer-events: none;
+}
+
+.ticket:disabled {
+  opacity: 1;
+  cursor: default;
+}
+
+/* 決済端末 */
+
+.payment-unit {
+  position: absolute;
+  left: 773px;
+  top: 755px;
+  width: 320px;
+  height: 338px;
+  border: 1.5px solid #b9b6ad;
+  border-radius: 12px;
+  background: #e0ddd3;
+  pointer-events: none;
+}
+
+.payment-terminal {
+  position: absolute;
+  left: 21.5px;
+  top: 29.5px;
+  width: 277px;
+  height: 288px;
+  border-radius: 20px;
+  background: #1d313a;
+}
+
+.payment-display {
+  position: absolute;
+  left: 59px;
+  top: 44px;
+  width: 154px;
+  height: 100px;
+  border: 1.5px solid #3c5052;
+  border-radius: 6px;
+  background: #a6b6b2;
+}
+
+.payment-display::after {
+  content: "";
+  position: absolute;
+  left: 17.5px;
+  top: 16.5px;
+  width: 116px;
+  height: 62px;
+  background: #d5dcd5;
+}
+
+.blue-circle {
+  position: absolute;
+  top: 183px;
+  width: 37px;
+  height: 37px;
+  border-radius: 19px;
+  background: #1778f5;
+}
+
+.blue-circle-left {
+  left: 45px;
+}
+
+.blue-circle-right {
+  left: 190px;
+}
+
+.ticket-outlet {
+  position: absolute;
+  left: 184px;
+  top: 1120px;
+  width: 559px;
+  height: 118px;
+  border-radius: 7px;
+  background: #1b292b;
+}
+
+/* 7段階評価 */
+
+.rating-frame {
+  background: #fff;
+  padding: 40px;
+  margin: 0;
+}
+
+.rating-frame fieldset {
+  width: 1120px;
+  height: 1180px;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.rating-table {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  border: 1px solid #9da8a8;
+}
+
+.rating-row {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  padding: 20px 24px;
+  border-bottom: 1px solid #b9b6ad;
+  font-size: 42px;
+  font-weight: 400;
+  line-height: normal;
+  cursor: pointer;
+}
+
+.rating-row:last-child {
+  border-bottom: 0;
+}
+
+.rating-row input {
+  appearance: none;
+  flex: none;
+  width: 48px;
+  height: 48px;
+  margin: 4px;
+  border: 3px solid #3d3d3d;
+  border-radius: 3px;
+  background: #fff;
+}
+
+.rating-row input:checked {
+  background: #1b292b;
+  box-shadow: inset 0 0 0 5px #fff;
+}
+
+.rating-number {
+  flex: none;
+  width: 66px;
+  font-weight: 700;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+}
+
+/* 終了・結果画面 */
+
+#finishScreen {
+  background: #fff;
+  padding: 32px;
+}
+
+.finish-panel {
+  width: min(850px, 100%);
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 24px 0;
+}
+
+td,
+th {
+  border-bottom: 1px solid #d7d5cd;
+  padding: 12px;
+  text-align: left;
+}
+
+.finish-panel button {
+  padding: 10px 16px;
+  margin: 8px 8px 0 0;
+  border: 1px solid #9da8a8;
+  background: #fff;
+  cursor: pointer;
+}
+
+/* デザイン確認用の戻るボタン */
+
+#previewExit {
+  position: fixed;
+  right: 18px;
+  bottom: 18px;
+  padding: 10px 16px;
+  border: 1px solid #9da8a8;
+  background: #fff;
+  z-index: 5;
+  cursor: pointer;
+}
