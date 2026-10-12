@@ -16,7 +16,7 @@ window.EXPERIMENT = {
   // 表示時間：単位は秒
   times: {
     intro: 8,
-    menu: 15,
+    menu: 10,
     baseline: 15,
     post: 15,
     between: 10
